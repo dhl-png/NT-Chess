@@ -6,12 +6,12 @@ import { useSocket } from "./providers/SocketProvider";
 import { useLocation,useNavigate,useParams  } from "react-router";
 import { useAuth } from "./context/AuthContext";
 import styled from "styled-components";
-
+import WinScreen from "./WinScreen";
 
 function Game(props){
-    const [squares, setSquares] = useState(Array(8).fill(Array(8).fill({piece: ".", colour: 'black'})))  
+    const [squares, setSquares] = useState(Array(8).fill(Array(8).fill({piece: ".", colour: 'red'})))  
     const [colour, setColour] = useState();
-    const [turn, setTurn] = useState("blue");
+    const [turn, setTurn] = useState("white");
     
     const [previewSquares, setPreviewSquares] = useState(Array(8).fill(Array(8).fill(false)))   
     const [flip, setFlip] = useState(false)
@@ -19,8 +19,9 @@ function Game(props){
     const [endPos, setEndPos] = useState([])
     const [count, setCount] = useState(0)
     const [winner, setWinner] = useState();
-    
+    const [game,setGame] = useState();
 
+    
     const location = useLocation()
 
     const {currentUser} = useAuth();
@@ -29,6 +30,7 @@ function Game(props){
     const { id } = useParams();
 
     function sendBoard(board){
+
         socket.emit('send-board', JSON.stringify(
             {   
                 turn: turn,
@@ -78,15 +80,16 @@ function Game(props){
             setSquares(board)
         })
     },[socket])
-    
+
+
     async function fetchGame(){
         const path = location.pathname;
         const response = await fetch("http://localhost:5186"+path)
         const data = await response.json();
-        if(data.White == currentUser.uid) setColour("red") //White
+        if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
             flipBoard();
-            setColour("blue")} //Black
+            setColour("black")} //Black
      }
 
     useEffect(()=>{
@@ -97,8 +100,8 @@ function Game(props){
         
         if(count == 1) {
             const piece = getPiece(squares,startPos);
-            // if(colour != turn) return // Your turn rule
-            // if(piece.colour != colour) return resetClick(); //your piece rule
+            if(colour != turn) return // Your turn rule
+            if(piece.colour != colour) return resetClick(); //your piece rule
             const moves = getMoves(startPos,squares);
             const filterdMoves = filterMoves(moves);
             previewMoves(filterdMoves);
@@ -130,42 +133,42 @@ function Game(props){
 
     function initBoard(){
         const s = slice2D(squares);
-        s[4][0] = {piece: "r", colour:'red'}
-        s[5][5] = {piece: "r", colour:'red'}
-        s[7][5] = {piece: "K", colour:'red'}
-        s[3][5] = {piece: "Q", colour:'blue'}
-        s[4][2] = {piece: "b", colour:'blue'}
+        s[4][0] = {piece: "r", colour:'white'}
+        s[5][5] = {piece: "r", colour:'white'}
+        s[7][5] = {piece: "K", colour:'white'}
+        s[3][5] = {piece: "Q", colour:'black'}
+        s[4][2] = {piece: "b", colour:'black'}
         setSquares(s)
     }
 
     function initBoard(){
         const s = slice2D(squares);
         //Black 
-        s[0][0] = {piece: "r", colour: 'red'}
-        s[0][1] = {piece: "k", colour: 'red'}
-        s[0][2] = {piece: "b", colour: 'red'}
-        s[0][3] = {piece: "K", colour: 'red'}
-        s[0][4] = {piece: "Q", colour: 'red'}
-        s[0][5] = {piece: "b", colour: 'red'}
-        s[0][6] = {piece: "k", colour: 'red'}
-        s[0][7] = {piece: "r", colour: 'red'}
+        s[0][0] = {piece: "r", colour: 'white'}
+        s[0][1] = {piece: "k", colour: 'white'}
+        s[0][2] = {piece: "b", colour: 'white'}
+        s[0][3] = {piece: "K", colour: 'white'}
+        s[0][4] = {piece: "Q", colour: 'white'}
+        s[0][5] = {piece: "b", colour: 'white'}
+        s[0][6] = {piece: "k", colour: 'white'}
+        s[0][7] = {piece: "r", colour: 'white'}
         //Pawns
         for(let i = 0; i< 8; i++){
-            s[1][i] = {piece: "p", colour: 'red'}
+            s[1][i] = {piece: "p", colour: 'white'}
         }
 
     //White
-        s[7][0] = {piece: "r", colour: 'blue'}
-        s[7][1] = {piece: "k", colour: 'blue'}
-        s[7][2] = {piece: "b", colour: 'blue'}
-        s[7][3] = {piece: "K", colour: 'blue'}
-        s[7][4] = {piece: "Q", colour: 'blue'}
-        s[7][5] = {piece: "b", colour: 'blue'}
-        s[7][6] = {piece: "k", colour: 'blue'}
-        s[7][7] = {piece: "r", colour: 'blue'}
+        s[7][0] = {piece: "r", colour: 'black'}
+        s[7][1] = {piece: "k", colour: 'black'}
+        s[7][2] = {piece: "b", colour: 'black'}
+        s[7][3] = {piece: "K", colour: 'black'}
+        s[7][4] = {piece: "Q", colour: 'black'}
+        s[7][5] = {piece: "b", colour: 'black'}
+        s[7][6] = {piece: "k", colour: 'black'}
+        s[7][7] = {piece: "r", colour: 'black'}
         //Pawns
         for(let i = 0; i< 8; i++){
-            s[6][i] = {piece: "p", colour: 'blue'}
+            s[6][i] = {piece: "p", colour: 'black'}
         }        
         setSquares(s)
     }
@@ -205,8 +208,8 @@ function Game(props){
         setFlip(!flip)
     }
     function getNextColour(colour){
-        if(colour == "red") return "blue"
-        if(colour == "blue") return "red"
+        if(colour == "white") return "black"
+        if(colour == "black") return "white"
     }
 
     function checkMate(squares,colour){
@@ -396,13 +399,13 @@ function Game(props){
         let direction = -1
         let firstMove = false
 
-        if(colour == "red") {
+        if(colour == "white") {
             direction = 1
             if(row == 1) firstMove = true
             if(row == 7) return //ADD Promotion
         };
         
-        if(colour == "blue"){
+        if(colour == "black"){
             if(row == 6) firstMove = true
             if(row == 0) return //ADD Promotion
         }
@@ -480,6 +483,10 @@ function Game(props){
         return possibleMoves
     }
 
+    function forceCheckMate(){
+        socket.emit('check-mate', (JSON.stringify({id: id, winner:colour})))
+    }
+
     function getRookMoves(startingPos,squares){
         let possibleMoves = [];
         const [row,col] = startingPos
@@ -548,18 +555,10 @@ function Game(props){
         );
     }
 
-
-    const Board = styled.div`
-        display:grid;
-        border: solid black 0.2em;
-        position: relative;
-        grid-template-columns: auto auto auto auto auto auto auto auto;
-    `
     return(
         <>
-        {winner && <WinnerScreen winner={winner}/>}
+        {winner && <WinScreen id={currentUser.uid} winner={winner}/> }
         <h2>{colour}</h2>
-
         <Board>   
             {flip ? renderBoard(): renderReverseBoard()}
         </Board>
@@ -571,11 +570,18 @@ function Game(props){
                         name = "Flip"/>
             <StartButton onClick = {(()=> navigate("/home"))}
                         name = "Exit"/>
-             <StartButton onClick = {(()=> checkMate(squares,colour))}
-                        name = "Get Pieces"/>
+             <StartButton onClick = {(()=> forceCheckMate())}
+                        name = "Check Mate"/>
 
         </>
     )
 }
+
+const Board = styled.div`
+display:grid;
+border: solid black 0.2em;
+position: relative;
+grid-template-columns: auto auto auto auto auto auto auto auto;
+`
 
 export default Game

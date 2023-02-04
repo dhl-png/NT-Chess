@@ -24,7 +24,8 @@ function Search(){
         setUsers(data)
     }
     
-    function submit(){
+    function submit(e){
+        e.preventDefault()
         const searchQry = searchRef.current.value;
         searchUsers(searchQry);
     }
@@ -32,19 +33,23 @@ function Search(){
     const Input = styled.input`
         width: 75vw;
         height: 3vh;
-
+        border: solid black 0.7em;
+        box-shadow: 8px 6px 0px 0px #000000;
+        margin: 0em 0em;
     `
 
 
     const Table = styled.table`
-        width: 75vw;
+        margin-top: 10em;
+        width: 60vw;
         border-collapse: collapse;
-        border: solid black 1px;
+        border: solid black 0.7em;
+        box-shadow: 8px 6px 0px 0px #000000;
+        
     `
     
     const Tr = styled.tr`
         cursor: pointer;
-
         &:hover{
             background: black;
             color:white;
@@ -57,7 +62,7 @@ function Search(){
     `
     const Td = styled.td`
         font-size: 2em;
-        padding: 0.5em 0em;
+        padding: 0.5em 0.5em;
     `
     const table = (
         <Table>
@@ -82,24 +87,33 @@ function Search(){
 
     const Button = styled.button`
         border: 1px solid black;
+        font-weight: 600;
         color: white;
+        align-self:flex-end;
+        font-size:2em;
+        width: 6em;
         background: black;
-        height: 3vh;
+        box-shadow: 8px 6px 0px 0px #000000;
     `
     
     return(
-        <>
-        <Title>Search</Title>
-        <div>
-            <Input ref={searchRef}/>    <Button onClick={submit}>Search</Button>
-        </div>
+        <Container>
+        <form onSubmit={submit}>
+        <Input ref={searchRef}/>   
+        </form>
+        <Button onClick={submit}>Search</Button>
      
         <div>
             {table}
         </div>
-        </>
+        </Container>
     )
 }
 
+const Container = styled.div`
+    display:flex;
+    flex-direction: column;
+    
+`
 
 export default Search

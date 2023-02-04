@@ -13,13 +13,15 @@ import Search from './Search'
 import styled from 'styled-components'
 import Game from './Game'
 
+const Container = styled.div`
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content: space-between;
+`
+
 function App() {
-  const Container = styled.div`
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content: space-between;
-  `
+
   return (
     <Container>
       <Router>

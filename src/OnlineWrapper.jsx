@@ -4,15 +4,19 @@ import GameWrapper from "./providers/GameWrapper"
 import { Outlet, Route } from "react-router-dom"
 import Navbar from "./Navbar.jsx"
 import Invite from "./Invite"
+import { UserProvider } from "./providers/UserProvider"
+
 function OnlineWrapper(){
     const {currentUser} = useAuth()
 
     return(
         <SocketProvider id ={currentUser.uid}>
            <GameWrapper>
-                <Navbar />
-                <Outlet />
-                <Invite />
+            <UserProvider>
+                    <Navbar />
+                    <Outlet />
+                    <Invite />
+                </UserProvider>
             </GameWrapper>
         </SocketProvider>
     )

@@ -14,6 +14,7 @@ function GameWrapper({children}){
     const socket = useSocket()
     const [invite, setInvite] = useState({});
     const [colour, setColour] = useState();
+    const [game, setGame] = useState();
     const { currentUser } = useAuth()
     const navigate = useNavigate()
 
@@ -28,23 +29,16 @@ function GameWrapper({children}){
 
     async function getCurrentGame(){
         const response = await fetch("http://localhost:5186/getCurrentGame/"+currentUser.uid)
-        return await response.text();
+        return await response.json();
     }
     
-    const test = (
-        <>
-            <p>You have been invited to a game by </p> {invite.player} 
-            <p>Click here to</p>  <button onClick={accpetInvite}>Join</button> 
-        </>
-    )
-        
     const value = {
         getCurrentGame
     }
 
     useEffect(()=>{
         if(socket == null) return
-        
+
         socket.on('recieve-invite', (res)=>{
             console.log("you have received an invite")
             newInvite(res)
@@ -53,8 +47,8 @@ function GameWrapper({children}){
 
         socket.on('start-game', (res) => {
             getCurrentGame().then((game)=>
-            {
-                navigate("/game/"+game);
+            {   
+                navigate("/game/"+game.Id);
             })
         });
 
@@ -63,7 +57,6 @@ function GameWrapper({children}){
     return(
         <GameContext.Provider value = {value}>  
             {colour && colour}
-            { invite.player !=null && test}
             {children}
         </GameContext.Provider>
     )

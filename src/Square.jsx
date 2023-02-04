@@ -15,7 +15,7 @@ const Tile = styled.div`
     text-align: center;
     width:5vw;
     height: 5vw;
-    color: red;
+    color: white;
 `
 const Image = styled.img`
     max-width:100%;
@@ -31,7 +31,8 @@ function Square(props){
     color = (props.squareColour) ? "blue" : color;
     
     function getPieceIcon(piece,color){
-        const inv = (color == "blue") ? 1 : 0
+        console.log(color)
+        const inv = (color == "black") ? 1 : 0
         if(piece == "K") return <Image style={{filter:`invert(${inv})`}} src={king} />
         if(piece == "k") return <Image style={{filter:`invert(${inv})`}} src={knight}/>
         if(piece == "b") return <Image style={{filter:`invert(${inv})`}} src={bishop}/>
@@ -40,7 +41,7 @@ function Square(props){
         if(piece == "r") return <Image style={{filter:`invert(${inv})`}} src={rook}/>
     }
     return(
-        // <button style={{ color: props.pieceColour, backgroundColor: props.squareColour ? "blue" : "white" }} onClick = {props.onClick} className="square">{props.square}</button>
+        // <button style={{ color: props.pieceColour, backgroundColor: props.squareColour ? "black" : "white" }} onClick = {props.onClick} className="square">{props.square}</button>
        <Tile style={{backgroundColor: color}} onClick={props.onClick}>{getPieceIcon(props.square,props.pieceColour)}</Tile>
     )
 }
