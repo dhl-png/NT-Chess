@@ -29,8 +29,10 @@ function Home(){
         const game = await getCurrentGame()
         let gameID = game.Id;
         if (gameID == 0) {
-            let user = fetchUser(currentUser.uid)
-            socket.emit('join-queue', JSON.stringify({id: currentUser.uid, elo:user.Id}));
+            let res = await fetchUser(currentUser.uid)
+            let user = await res.json()
+            console.log(user)
+            socket.emit('join-queue', JSON.stringify({id: currentUser.uid, elo:user.Elo}));
         } else {
             socket.emit('join-game', game.Id);
         }
@@ -38,7 +40,7 @@ function Home(){
   
     return(
         <>
-          <ButtonGroup>
+          <ButtonGroup>     
             <Title>NT-Chess</Title>
           
             <Button onClick={() => joinGame()}>

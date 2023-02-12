@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-do
 import './App.css'
 import { AuthProvider } from './context/AuthContext'
 import Login from './Login'
+import SignUp from './SignUp'
+
 import PrivateRoutes from './PrivateRoutes'
 import Home from './Home'
 import OnlineWrapper from './OnlineWrapper'
@@ -11,7 +13,7 @@ import Profile from './Profile'
 import Friends from './Friends'
 import Search from './Search'
 import styled from 'styled-components'
-import Game from './Game'
+import GameManager from './GameManager'
 
 const Container = styled.div`
 display:flex;
@@ -29,6 +31,8 @@ function App() {
           <Routes>
             <Route path="*" element={<Navigate to={"/home"}/>}/>
             <Route path="/login" element={<Login />}/>  
+            <Route path="/signup" element={<SignUp />}/>  
+
             {/* Create account */}
             {/* Home Page not loged in */}
             <Route element={<PrivateRoutes />} >
@@ -37,7 +41,7 @@ function App() {
                 <Route path="user/:id" element={<Profile/>}/>
                 <Route path='user/:id/friends' element={<Friends/>}/>
                 <Route path='search' element={<Search/>}/>
-                <Route path='/game/:id' element={<Game/>}/>
+                <Route path='/game/:id' element={<GameManager/>}/>
               </Route>
             </Route>
           </Routes>

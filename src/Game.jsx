@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Row from "./Row";
 import Square from "./Square";
 import StartButton from "./StartButton";
@@ -8,7 +8,7 @@ import { useAuth } from "./context/AuthContext";
 import styled from "styled-components";
 import WinScreen from "./WinScreen";
 
-function Game(props){
+function Game({id}){
     const [squares, setSquares] = useState(Array(8).fill(Array(8).fill({piece: ".", colour: 'red'})))  
     const [colour, setColour] = useState();
     const [turn, setTurn] = useState("white");
@@ -18,16 +18,14 @@ function Game(props){
     const [startPos, setStartPos] = useState([])
     const [endPos, setEndPos] = useState([])
     const [count, setCount] = useState(0)
-    const [winner, setWinner] = useState();
-    const [game,setGame] = useState();
-
-    
+    const [winner, setWinner] = useState(null);
+    const [eloChange, setEloChange] = useState();
     const location = useLocation()
-
+    const isMounted = useRef(false);
     const {currentUser} = useAuth();
     const socket = useSocket();
     const navigate = useNavigate();
-    const { id } = useParams();
+    // const { id } = useParams();
 
     function sendBoard(board){
 
@@ -42,31 +40,34 @@ function Game(props){
 
     function endGame(winner){
         console.log(`ending game ${id} winner: ${winner}`)
-        fetch(`http://localhost:5186/endGame`, 
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                Id:id,
-                Winner: winner
-            })
-        });
     
     }
 
+    useEffect(()=> {
+        console.log("colour chnaged")
+    },[colour])
+
+    useEffect(() => {
+        console.log("fetching game")
+        fetchGame();
+    }, [])
+
     useEffect(()=>{
         if(socket == null) return
-        fetchGame();
         socket.emit('join-game', id);
     },[socket])
 
     useEffect(()=>{
-        if(socket == null) return
-        socket.on('game-over', (winner) =>{
+        if(socket == null || colour == null ) return
+        if(eloChange != null) return 
+        socket.on('game-over', (data) =>{
+            const res = JSON.parse(data)
+            const elo = res.elo
+            const winner = res.winner
+            setEloChange(elo[colour])
             setWinner(winner)
-            endGame(winner)
         })
-    },[socket])
+    },[socket,colour])
 
     useEffect(()=>{
         if(socket == null) return      
@@ -75,12 +76,12 @@ function Game(props){
             const data = JSON.parse(res);
             const board = data.board;
             const turn = data.turn
-            console.log(turn)
             setTurn(getNextColour(turn))
             setSquares(board)
         })
     },[socket])
 
+ 
 
     async function fetchGame(){
         const path = location.pathname;
@@ -92,7 +93,13 @@ function Game(props){
             setColour("black")} //Black
      }
 
+    useEffect(() => {
+        if(!isMounted.current) isMounted.current = true
+        if(isMounted.current) console.log("wow")
+    }, [location])
+
     useEffect(()=>{
+        console.log('getting board')
         initBoard()
     },[])
     
@@ -100,6 +107,7 @@ function Game(props){
         
         if(count == 1) {
             const piece = getPiece(squares,startPos);
+            console.log(piece)
             if(colour != turn) return // Your turn rule
             if(piece.colour != colour) return resetClick(); //your piece rule
             const moves = getMoves(startPos,squares);
@@ -110,15 +118,13 @@ function Game(props){
         if (count == 2) {
             const [endRow,endCol] = endPos
             if(!previewSquares[endRow][endCol]) return resetClick(); //Possible move rule
-            if(getPiece(squares,endPos).colour == getPiece(squares,startPos).colour) return resetClick(); //Enemy Piece rule
             if(startPos == endPos) return resetClick(); //Different square rule
 
             movePiece();
             return resetClick();
         }
     }, [count])
-
-
+    
     function resetClick(){
         setPreviewSquares(Array(8).fill(Array(8).fill(false)))
         setCount(0)
@@ -128,21 +134,8 @@ function Game(props){
         return (<>{[...Array(8).keys()].map(j => renderSquare(i,j))}</>)
     }
     
-    function renderBoard2(){
-    }
-
     function initBoard(){
-        const s = slice2D(squares);
-        s[4][0] = {piece: "r", colour:'white'}
-        s[5][5] = {piece: "r", colour:'white'}
-        s[7][5] = {piece: "K", colour:'white'}
-        s[3][5] = {piece: "Q", colour:'black'}
-        s[4][2] = {piece: "b", colour:'black'}
-        setSquares(s)
-    }
-
-    function initBoard(){
-        const s = slice2D(squares);
+        const s = slice2D(Array(8).fill(Array(8).fill({piece: ".", colour: 'red'})));
         //Black 
         s[0][0] = {piece: "r", colour: 'white'}
         s[0][1] = {piece: "k", colour: 'white'}
@@ -154,28 +147,29 @@ function Game(props){
         s[0][7] = {piece: "r", colour: 'white'}
         //Pawns
         for(let i = 0; i< 8; i++){
-            s[1][i] = {piece: "p", colour: 'white'}
+            s[1][i] = {piece: "p", colour: 'white', enPessant: false}
         }
 
     //White
-        s[7][0] = {piece: "r", colour: 'black'}
-        s[7][1] = {piece: "k", colour: 'black'}
-        s[7][2] = {piece: "b", colour: 'black'}
-        s[7][3] = {piece: "K", colour: 'black'}
-        s[7][4] = {piece: "Q", colour: 'black'}
-        s[7][5] = {piece: "b", colour: 'black'}
+        s[3][5] = {piece: "p", colour: 'black', enPessant: false}
+
+        s[7][0] = {piece: "r", colour: 'black', hasMoved: false}
+        // s[7][1] = {piece: "k", colour: 'black'}
+        // s[7][2] = {piece: "b", colour: 'black'}
+        s[7][3] = {piece: "K", colour: 'black', hasMoved: false}
+        // s[7][4] = {piece: "Q", colour: 'black'}
+        // s[7][5] = {piece: "b", colour: 'black'}
         s[7][6] = {piece: "k", colour: 'black'}
-        s[7][7] = {piece: "r", colour: 'black'}
+        s[7][7] = {piece: "r", colour: 'black', hasMoved: false}
         //Pawns
         for(let i = 0; i< 8; i++){
-            s[6][i] = {piece: "p", colour: 'black'}
+            s[6][i] = {piece: "p", colour: 'black', enPessant: false}
         }        
         setSquares(s)
     }
     
     function handleClick(row,col){
         let pos = [row,col]
-        console.log(pos)
         if (count == 0) setStartPos(pos)
         if (count == 1) setEndPos(pos)
         setCount(count+1)
@@ -189,6 +183,83 @@ function Game(props){
             ps[row][col] = true
         })
         setPreviewSquares(ps)
+    }
+
+
+    function castle(startPos,endPos){
+        const [startRow, startCol] = startPos
+        const [endRow, endCol] = endPos
+        if(startCol < endCol) return castleLong(endRow)
+        if(startCol > endCol) return castleShort(endRow)
+    }
+
+    function castleLong(row){
+        const s = slice2D(squares);
+        //Move King
+        const placeHolderK = s[row][5]
+        s[row][5] = s[row][3]
+        s[row][5].hasMoved = true
+        s[row][3] = placeHolderK
+        //Move Rook
+        const placeHolderR = s[row][4]
+        s[row][4] = s[row][7]
+        s[row][7] = placeHolderR
+        console.log(s)
+        return s
+    }
+
+    function castleShort(row){
+        const s = slice2D(squares);
+
+        //Move King
+        const placeHolderK = s[row][1]
+        s[row][1] = s[row][3]
+        s[row][1].hasMoved = true
+        s[row][3] = placeHolderK
+        //Move Rook
+        const placeHolderR = s[row][2]
+        s[row][2] = s[row][0]
+        s[row][0] = placeHolderR
+        return s
+    }
+    
+    
+    function canCastle(kingPos,colour){
+        if (getPiece(squares, kingPos).hasMoved) return false
+        const shortCastle = canCastleShort(kingPos,colour);
+        const longCastle = canCastleLong(kingPos,colour);   
+        return({shortCastle: shortCastle, longCastle:longCastle })
+    }
+
+    function canCastleShort(kingPos, colour){
+        if(shortRookHasMoved(colour)) return false
+        let [kingRow,kingCol] = kingPos;
+        while(kingCol > 1) {
+            kingCol--
+            if(checkBlockedSquare([kingRow,kingCol], squares)) return false
+        }
+        return true;
+    }
+
+    function canCastleLong(kingPos, colour){
+        if(longRookHasMoved(colour)) return false
+        let [kingRow,kingCol] = kingPos;
+        while(kingCol < 6) {
+            kingCol++
+            if(checkBlockedSquare([kingRow,kingCol], squares)) return false
+        }
+        return true;
+    }
+
+    function shortRookHasMoved(colour){
+        console.log(colour)
+        if (colour == "white") return squares[0][0].hasMoved 
+        if (colour == "black") return squares[7][0].hasMoved 
+    }
+
+    function longRookHasMoved(colour){
+        if (colour == "white") return squares[0][7].hasMoved 
+        if (colour == "black") return squares[7][7].hasMoved 
     }
 
     function filterMoves(moves){
@@ -210,6 +281,17 @@ function Game(props){
     function getNextColour(colour){
         if(colour == "white") return "black"
         if(colour == "black") return "white"
+    }
+
+    function setEnPessant(pos,colour,s){
+        const [row,col] = pos;
+        console.log(s[row][col+1].colour)
+        console.log(colour)
+   
+        if(s[row][col+1].colour != colour && s[row][col+1].piece == "p") s[row][col+1].enPessant = true;
+        if(s[row][col-1].colour != colour && s[row][col-1].piece == "p") s[row][col-1].enPessant = true;
+    
+        return s
     }
 
     function checkMate(squares,colour){
@@ -282,11 +364,21 @@ function Game(props){
     function movePiece(){
         const [startRow,startCol] = startPos 
         const [endRow,endCol] = endPos
-        const s = slice2D(squares)
+        let s = slice2D(squares)
         const startSquare = s[startRow][startCol]
         const endSquare = s[endRow][endCol]
         const placeHolder = startSquare
 
+        if(startSquare.colour == endSquare.colour){
+            if(startSquare.hasMoved) return
+            if(startSquare.piece == "K" && endSquare.piece === "r") {
+                const castledMove = castle(startPos,endPos)
+                setSquares(castledMove)
+                sendBoard(castledMove)
+            }
+            return
+        } 
+        
         if(endSquare.piece !== ".") {
             s[startRow][startCol] = {piece: ".", colour: 'black'}
         } else {
@@ -294,20 +386,29 @@ function Game(props){
         }
 
         s[endRow][endCol] = placeHolder
-        let nextColour;
- 
+        
         if(kingCheck(s,colour)) return
         if(kingCheck(s,getNextColour(colour))){
             console.log(getNextColour(colour), "check")
             if(checkMate(s,getNextColour(colour))){
                 socket.emit('check-mate', (JSON.stringify({id: id, winner:colour})))
-                console.log(getNextColour(colour), "Check Mate")
+                console.log(getNextColour(colour), "Check Mate")        
             }
         }
+        if(startSquare.piece == 'p' && isDoubleMove(startRow,endRow)) s = setEnPessant(endPos,colour,s)
+        if(startSquare.piece == 'K') startSquare.hasMoved = true 
+        if(startSquare.piece == 'r') startSquare.hasMoved = true 
+
+        console.log(startSquare)
         sendBoard(s);
         setSquares(s)
     }
     
+    function isDoubleMove(startRow, endRow){
+        if(Math.abs(startRow - endRow) == 2) return true
+        return false
+    }
+
     function getMoves(pos,squares){
         const piece = getPiece(squares,pos)
         if (piece.piece == "K") return getKingMoves(pos);
@@ -334,7 +435,7 @@ function Game(props){
 
     function getKingMoves(startingPos){
         let [row,col] = startingPos
-
+        const colour = squares[row][col].colour
         let possibleMoves = []
         possibleMoves[0] = [row + 1 ,col]
         possibleMoves[1] = [row,col + 1]
@@ -347,6 +448,15 @@ function Game(props){
 
         possibleMoves[6] = [row+1,col-1]
         possibleMoves[7] = [row -1 ,col+1]
+        let castleMoves
+        if(count == 1){
+            castleMoves = canCastle(startingPos,colour)
+            console.log(castleMoves)
+        }
+        if(castleMoves){
+            if(castleMoves.shortCastle) possibleMoves.push([row, 0])
+            if(castleMoves.longCastle) possibleMoves.push([row, 7])
+        }
         return possibleMoves 
     }
     
@@ -557,7 +667,8 @@ function Game(props){
 
     return(
         <>
-        {winner && <WinScreen id={currentUser.uid} winner={winner}/> }
+        {winner}
+        {winner && <WinScreen id={currentUser.uid} location={location} winner={winner} eloChange={eloChange} colour={colour}/> }
         <h2>{colour}</h2>
         <Board>   
             {flip ? renderBoard(): renderReverseBoard()}

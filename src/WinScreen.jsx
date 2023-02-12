@@ -1,30 +1,40 @@
 import styled from "styled-components"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSocket } from "./providers/SocketProvider";
 import { useUser } from "./providers/UserProvider";
+import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 
-function WinScreen({winner,id}){
-    const [active, setActive] = useState(true);
+function WinScreen({winner,id,eloChange}){
     const socket = useSocket();
     const {fetchUser} = useUser();
+    const navigate = useNavigate();
+
     function rematch(){
-        //TODO() Not implemented;
+       socket.emit('rematch', "test");
     }
 
-    function newGame(){
-        socket.emit('join-queue', id);
+    async function newGame(){
+        const res = await fetchUser(id);
+        const user = await res.json();
+        console.log(user)
+        const json = JSON.stringify({id: user.Id, elo:user.Elo});
+        socket.emit('join-queue', json);
         navigate("/home")
+    }
+    function addPlusSymbol(eloChange){
+        if (eloChange > 0 ) return `+${eloChange}`
+        return eloChange
     }
 
     return(
-        active &&
-        <Card onClick={() => setActive(true1)}>
-            <ExitButton>X</ExitButton>
-            <h1>{winner}</h1>
-            <h1>Elo Gain and los</h1>
+        winner != null &&
+        <Card>
+            <h1>{winner} won</h1>
+            <h1>{addPlusSymbol(eloChange)}</h1>
             <ButtonContainer>
-                <Button>Play again</Button>
-                <Button>Remtach</Button>
+                <Button onClick ={newGame}>Play again</Button>
+                <Button onClick={rematch}>Remtach</Button>
             </ButtonContainer>
         </Card>
     )
@@ -74,7 +84,7 @@ padding: 1.5vw;
     background:black;
     color:white;
 }
-&:hover{
+&:hover{ 
     color:white;
     background:black;
     border: solid white 0.5em;    

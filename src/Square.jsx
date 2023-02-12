@@ -23,15 +23,12 @@ const Image = styled.img`
 
 `
 function Square(props){
-    function test(){
-        console.log("test")
-    }
+  
 
     let color = ((props.row + props.col) % 2 == 0 ) ? "black" : "white"
     color = (props.squareColour) ? "blue" : color;
     
     function getPieceIcon(piece,color){
-        console.log(color)
         const inv = (color == "black") ? 1 : 0
         if(piece == "K") return <Image style={{filter:`invert(${inv})`}} src={king} />
         if(piece == "k") return <Image style={{filter:`invert(${inv})`}} src={knight}/>

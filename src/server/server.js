@@ -1,3 +1,4 @@
+
 class Queue {
     constructor() {
       this.elements = {};
@@ -43,13 +44,14 @@ const boards = [];
 
     socket.on('join-queue', (data)=>{
       const player = JSON.parse(data);
+      console.log(player)
       if (playersInQueue[String(player.id)]) return console.log(player.id + " already in queue");
       playersInQueue[String(player.id)] = true;
-      const elo = player.elo
+      const elo = 800
       const id = player.id
       const bracket = Math.round(elo/100);
+      console.log(bracket)
       brackets[bracket].enqueue(id);
-
       if(brackets[bracket].length > 1) {
 
         const p1 = brackets[bracket].dequeue()
@@ -76,6 +78,7 @@ const boards = [];
 
     socket.on('end-game', (gameID) => {
       io.to(String(gameID)).emit('exit-game');
+      
       delete boards[gameID]
     })
 
@@ -91,13 +94,28 @@ const boards = [];
     })
     
     socket.on('check-mate', (res) =>{
+      console.log("game over")
       const data = JSON.parse(res)
       const gameId = data.id;
       const winner = data.winner;
-      console.log(winner)
-      io.to(gameId).emit('game-over', winner)
+      const eloChange = endGame(gameId,winner);
+      eloChange.then((elo) => {
+        console.log("e", elo)
+        io.to(String(gameId)).emit('game-over', JSON.stringify(
+          {
+            elo:elo,
+            winner:winner}
+          ))
+      })
+
       delete boards[gameId];
     })
+
+
+    socket.on('rematch', (game) => {
+      console.log(game)
+      socket.broadcast.emit('recieve-invite', {player:userId})
+    });
 
     socket.on('accept-invite', (player) =>{
 
@@ -125,6 +143,19 @@ const boards = [];
       })
     })
 
+   async function endGame(id, winner){
+    const res = await fetch("http://localhost:5186/endGame", 
+    {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json;'},
+        body: JSON.stringify({
+            Id:id,
+            Winner:winner
+        })
+    });
+
+    return await res.json();
+   }
 
     async function newGame(game){
       const resp = await fetch("http://localhost:5186/newGame",{

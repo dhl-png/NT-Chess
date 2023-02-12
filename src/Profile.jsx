@@ -96,11 +96,12 @@ function Profile(){
      
         <Card>
         <Title>{user.Username}</Title>
-         
+        <Title>({user.Elo})</Title>
            <SideButtonGroup>         
             {currentUser.uid != id && options}
             <AddButton onClick={()=>navigate("friends")}>View Friends</AddButton>     
             </SideButtonGroup>
+            
         </Card>
 
         <div>{friendStatus}</div>
@@ -127,6 +128,8 @@ font-size:5em;
 
 const Card = styled.div`
 position:relative;
+display:flex;
+justify-content: space-even;
 border: 0.25em solid black;
 width:75vw;
 color:black;

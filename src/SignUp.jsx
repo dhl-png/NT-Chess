@@ -4,51 +4,84 @@ import { useState } from "react"
 import { useNavigate,Link } from "react-router-dom"
 import styled from "styled-components"
 
-function Login(){
+function SignUp(){
     const [error, setError] = useState()
     const emailRef = useRef()
     const passwordRef = useRef()
-    const {login} = useAuth() 
+    const confirmPasswordRef = useRef()
+    const usernameRef = useRef();
+
+    const {signup} = useAuth() 
     const navigate = useNavigate()
 
     async function submit(e){
         e.preventDefault()
+
+        const username = usernameRef.current.value
         const email = emailRef.current.value
         const password = passwordRef.current.value
+        const confirmPassword = confirmPasswordRef.current.value
+
+        if(password != confirmPassword) return setError("Passwords do not match")
 
         try{
             setError("")
-            await login(email,password).then((res)=>{
-                console.log(res)
+            await signup(email,password).then((res)=>{
+                const id = res.user.uid
+                newUser(id,username)
                 navigate("/home")
             })
         } catch {
             setError("Failed to log in")
         }
 
+
+    }
+
+    async function newUser(id,username){
+        const user = fetch("http://localhost:5186/newUser", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json;'},
+            body: JSON.stringify({
+                Id: id,
+                Username: username,
+                Elo: 800,
+            })
+        })
+        return await user
+
     }
     return(
         
         <Container>
-            <H1>Login</H1>   
-            {error}
+            <h2>{error}</h2>
+            <H1>Sign Up</H1>   
+
             <div>                
                 <Label>Username</Label>
+                <Input ref={usernameRef}/>
+            </div>
+               <div>                
+                <Label>Email</Label>
                 <Input ref={emailRef}/>
             </div>
             <div>
                 <Label> Password</Label>
                 <Input type="password" ref={passwordRef}/>
             </div>
-            <Button onClick={submit}>Log in</Button>
             <div>
-                <Link to ={"/signup"}>Dont have an account?</Link>
+                <Label>Confirm Password</Label>
+                <Input type="password" ref={confirmPasswordRef}/>
+            </div>
+            <Button onClick={submit}>Sign Up</Button>
+            <div>
+                <Link to ={"/login"}>Already have an account?</Link>
             </div>
         </Container>
     )
 }
 
-export default Login
+export default SignUp
 
 const Container = styled.div`
     position: absolute;

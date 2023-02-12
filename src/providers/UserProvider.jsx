@@ -8,8 +8,8 @@ export function useUser(){
 export function UserProvider({children}){
 
     async function fetchUser(id){
-        const newUser = await fetch("/user/"+currentUser.uid);
-        return newUser;
+        const newUser = fetch("http://localhost:5186/user/"+id);
+        return await newUser;
     }
 
     const value = {
