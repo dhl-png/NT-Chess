@@ -85,7 +85,7 @@ function Game({id}){
 
     async function fetchGame(){
         const path = location.pathname;
-        const response = await fetch("http://nt-chess-db-production.up.railway.app:80"+path)
+        const response = await fetch("https://nt-chess-db-production.up.railway.app:80"+path)
         const data = await response.json();
         if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
