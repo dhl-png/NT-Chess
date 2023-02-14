@@ -8,7 +8,7 @@ export function useUser(){
 export function UserProvider({children}){
 
     async function fetchUser(id){
-        const newUser = fetch("http://localhost:5186/user/"+id);
+        const newUser = fetch("http://nt-chess-db-production.up.railway.app:80/user/"+id);
         return await newUser;
     }
 

@@ -39,7 +39,7 @@ function SignUp(){
     }
 
     async function newUser(id,username){
-        const user = fetch("http://localhost:5186/newUser", {
+        const user = fetch("http://nt-chess-db-production.up.railway.app:80/newUser", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json;'},
             body: JSON.stringify({

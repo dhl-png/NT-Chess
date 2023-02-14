@@ -28,7 +28,7 @@ function GameWrapper({children}){
     }
 
     async function getCurrentGame(){
-        const response = await fetch("http://localhost:5186/getCurrentGame/"+currentUser.uid)
+        const response = await fetch("http://nt-chess-db-production.up.railway.app:80/getCurrentGame/"+currentUser.uid)
         return await response.json();
     }
     

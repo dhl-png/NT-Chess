@@ -23,15 +23,19 @@ function Profile(){
         areFriends();
     }, [location])
 
+
     async function fetchUser(){
-        const uri = "http://localhost:5186"+location
-        const res = await fetch(uri);
+        const uri = "http://nt-chess-db-production.up.railway.app:80"+location
+        const res = await fetch(uri, {
+            method: 'GET',
+            origin: 'localhost'
+        });
         const data = res.json();
         setUser(await data)
     }
 
     async function areFriends(){
-        const uri = "http://localhost:5186/getFriendship"
+        const uri = "http://nt-chess-db-production.up.railway.app:80/getFriendship"
         const res = await fetch(uri, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
@@ -49,7 +53,7 @@ function Profile(){
     }
 
     function removeFriend(){
-        const uri = "http://localhost:5186/removeFriend"
+        const uri = "http://nt-chess-db-production.up.railway.app:80/removeFriend"
         fetch(uri, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -62,7 +66,7 @@ function Profile(){
     }
 
     function addFriend(){
-        const uri = "http://localhost:5186/addFriend"
+        const uri = "http://nt-chess-db-production.up.railway.app:80/addFriend"
         fetch(uri, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -88,12 +92,6 @@ function Profile(){
         return(
             
         <>  
-
-
-         
-
-
-     
         <Card>
         <Title>{user.Username}</Title>
         <Title>({user.Elo})</Title>

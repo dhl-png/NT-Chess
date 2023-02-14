@@ -9,7 +9,7 @@ function Friends(){
 
     useEffect(() => {
         async function fetchFriends(){
-            const uri = "http://localhost:5186"+location
+            const uri = "http://nt-chess-db-production.up.railway.app:80"+location
             const res = await fetch(uri);
             const data = res.json()
             setFriends(await data);
