@@ -11,7 +11,7 @@ export function SocketProvider({id, children}){
     const [socket, setSocket] = useState()
 
     useEffect(() => {
-        const newSocket = io('http://52.65.178.242:8080', 
+        const newSocket = io('https://nt-chess.gay:8080', 
         { query: {id} })
         setSocket(newSocket)
         return () => newSocket.close()

@@ -25,7 +25,7 @@ function Profile(){
 
 
     async function fetchUser(){
-        const uri = "http://nt-chess-db-production.up.railway.app:80"+location
+        const uri = "https://nt-chess2.up.railway.app"+location
         const res = await fetch(uri, {
             method: 'GET',
             origin: 'localhost'
@@ -35,7 +35,7 @@ function Profile(){
     }
 
     async function areFriends(){
-        const uri = "http://nt-chess-db-production.up.railway.app:80/getFriendship"
+        const uri = "https://nt-chess2.up.railway.app/getFriendship"
         const res = await fetch(uri, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
@@ -53,7 +53,7 @@ function Profile(){
     }
 
     function removeFriend(){
-        const uri = "http://nt-chess-db-production.up.railway.app:80/removeFriend"
+        const uri = "https://nt-chess2.up.railway.app/removeFriend"
         fetch(uri, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -66,7 +66,7 @@ function Profile(){
     }
 
     function addFriend(){
-        const uri = "http://nt-chess-db-production.up.railway.app:80/addFriend"
+        const uri = "https://nt-chess2.up.railway.app/addFriend"
         fetch(uri, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
