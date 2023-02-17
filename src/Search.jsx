@@ -17,7 +17,7 @@ function Search(){
     `
 
     async function searchUsers(qry){
-        const uri = "https://nt-chess-db-production.up.railway.app:80/search?"
+        const uri = "https://nt-chess2.up.railway.app/search?"
         const res = await fetch(
             uri + new URLSearchParams({qry: qry}))
         const data = await res.json()
