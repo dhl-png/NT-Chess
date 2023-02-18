@@ -87,7 +87,7 @@ function Game({id}){
         const path = location.pathname;
         const response = await fetch("https://nt-chess2.up.railway.app"+path)
         const data = await response.json();
-        console.log(data.White)
+        console.log("data", data.White)
         if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
             flipBoard();
@@ -595,6 +595,7 @@ function Game({id}){
     }
 
     function forceCheckMate(){
+        console.log("colour", colour)
         socket.emit('check-mate', (JSON.stringify({id: id, winner:colour})))
     }
 
