@@ -8,6 +8,7 @@ function Navbar() {
     return(
         <Nav>
             <Spacer/>
+            <NavItem>{currentUser.uid}</NavItem>
             <NavItem onClick={() => navigate("/home")}>Home</NavItem>
             <NavItem onClick={() => navigate("/user/"+currentUser.uid)}>Profile</NavItem>
             <NavItem onClick={() => navigate("/Search")}>Search</NavItem>
