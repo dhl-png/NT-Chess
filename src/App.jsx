@@ -23,7 +23,7 @@ justify-content: space-between;
 `
 
 function App() {
-  console.log(process.env.apiKey)
+  console.log(process.env.APIKEY)
   return (
     <Container>
       <Router>
