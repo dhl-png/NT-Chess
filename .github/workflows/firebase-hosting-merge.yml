@@ -16,11 +16,11 @@ jobs:
     environment: Nt-Chess-API
     steps:
       - uses: actions/checkout@v2
-        env: 
-          APIKEY: '${{ secrets.APIKEY }}'
       - run: echo "$APIKEY"
       - run: echo "$TEST"
       - run: npm ci && npm run build
+        env: 
+          TEST: "monday"
         
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
