@@ -29,7 +29,7 @@ const firebaseConfig = {
     appId: process.env.appId
 }
 
-console.log("key",  process.env.APIKEY)
+console.log("key",  process.env.TEST)
 const app = initializeApp(firebaseConfig) 
 export const auth = getAuth(app)
 export default app
