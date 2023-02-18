@@ -16,20 +16,20 @@ const firebaseConfigDev = {
 }
 
 const firebaseConfig = {
-    apiKey: process.env.APIKEY,
+    apiKey: "AIzaSyDYxEKJROXDEvjrB_GWeez5M3hhBQKBaas",
   
-    authDomain: process.env.authDomain,
+    authDomain: "nt-chess.firebaseapp.com",
   
-    projectId: process.env.projectId,
+    projectId: "nt-chess",
   
-    storageBucket: process.env.storageBucket,
+    storageBucket: "nt-chess.appspot.com",
   
-    messagingSenderId: process.env.messagingSenderId,
+    messagingSenderId: "522459140272",
   
-    appId: process.env.appId
+    appId: "1:522459140272:web:5fb594d1b7ba75e34b2b75"
 }
 
-console.log("T",  process.env.TEST)
+console.log("T", process.env.TEST)
 const app = initializeApp(firebaseConfig) 
 export const auth = getAuth(app)
 export default app
