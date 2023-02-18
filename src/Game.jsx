@@ -87,7 +87,7 @@ function Game({id}){
         const path = location.pathname;
         const response = await fetch("https://nt-chess2.up.railway.app"+path)
         const data = await response.json();
-        console.log("data", data.White)
+        console.log("data", await data.White)
         if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
             flipBoard();
@@ -152,14 +152,12 @@ function Game({id}){
         }
 
     //White
-        s[3][5] = {piece: "p", colour: 'black', enPessant: false}
-
         s[7][0] = {piece: "r", colour: 'black', hasMoved: false}
-        // s[7][1] = {piece: "k", colour: 'black'}
-        // s[7][2] = {piece: "b", colour: 'black'}
+        s[7][1] = {piece: "k", colour: 'black'}
+        s[7][2] = {piece: "b", colour: 'black'}
         s[7][3] = {piece: "K", colour: 'black', hasMoved: false}
-        // s[7][4] = {piece: "Q", colour: 'black'}
-        // s[7][5] = {piece: "b", colour: 'black'}
+        s[7][4] = {piece: "Q", colour: 'black'}
+        s[7][5] = {piece: "b", colour: 'black'}
         s[7][6] = {piece: "k", colour: 'black'}
         s[7][7] = {piece: "r", colour: 'black', hasMoved: false}
         //Pawns
