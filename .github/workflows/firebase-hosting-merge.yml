@@ -6,12 +6,13 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - main
+env:
+  APIKEY: '${{secrets.APIKEY}}'  
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     environment: Nt-Chess-API
-    env:
-      APIKEY: '${{secrets.APIKEY}}'
+ 
     steps:
       - uses: actions/checkout@v2
       - run: npm ci && npm run build
