@@ -85,8 +85,9 @@ function Game({id}){
 
     async function fetchGame(){
         const path = location.pathname;
-        const response = await fetch("https://nt-chess-db-production.up.railway.app:80"+path)
+        const response = await fetch("https://nt-chess2.up.railway.app"+path)
         const data = await response.json();
+        console.log(data.White)
         if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
             flipBoard();
