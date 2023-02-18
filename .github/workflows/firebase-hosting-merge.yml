@@ -12,11 +12,6 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     environment: Nt-Chess-API
-<<<<<<< HEAD
- 
-=======
-   
->>>>>>> 38470e60f125a358c665c993f4ee99a9af1c35d2
     steps:
       - uses: actions/checkout@v2
         env: 
