@@ -29,16 +29,14 @@ function Invite({user}) {
 
     return (
         
-        active ?
+        player!=null && active ?
         <Inv> 
-      
-         
             <Message> You have been invited to play by {player} </Message>
             <ButtonContainer>
                 <Button onClick={() => acceptInvite()} >Accept</Button>
                 <Button onClick={() => setActive(false)}>Decline</Button>
             </ButtonContainer> 
-      
+
             </Inv>
      : 
         <Inv>
