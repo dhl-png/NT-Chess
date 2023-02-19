@@ -11,7 +11,7 @@ function Invite({user}) {
         if(socket == null) return
         socket.on('recieve-invite', (data)=>{
             console.log(data.player)
-            setPlayer(data.player)
+            setPlayer(getPlayerName(data.player))
             setActive(true)
         }) 
     }, [socket])
@@ -19,6 +19,12 @@ function Invite({user}) {
     function acceptInvite(){
         socket.emit('accept-invite', player);
         setActive(false);
+    }
+    async function getPlayerName(player){
+        const resp = await fetch("https://nt-chess2.up.railway.app/user/"+player)
+        const data = await resp.json()
+        const username = data.Username;
+        return username
     }
 
     return (
@@ -56,6 +62,7 @@ const Inv = styled.div`
         align-self: center;
         margin-right: 0;
         margin-bottom:2em;
+        max-width :90vw;
     }
 
 `
