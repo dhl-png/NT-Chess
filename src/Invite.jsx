@@ -10,9 +10,11 @@ function Invite({user}) {
     useEffect(() => {
         if(socket == null) return
         socket.on('recieve-invite', (data)=>{
-            console.log(data.player)
-            setPlayer(getPlayerName(data.player))
-            setActive(true)
+            getPlayerName(data.player).then((name) =>{
+                console.log(name)
+                setPlayer(name)
+                setActive(true)
+            })
         }) 
     }, [socket])
     
@@ -23,13 +25,13 @@ function Invite({user}) {
     async function getPlayerName(player){
         const resp = await fetch("https://nt-chess2.up.railway.app/user/"+player)
         const data = await resp.json()
-        const username = data.Username;
-        return username
+        const username = await data.Username;
+        return await username
     }
 
     return (
         
-        player!=null && active ?
+        active ?
         <Inv> 
             <Message> You have been invited to play by {player} </Message>
             <ButtonContainer>
