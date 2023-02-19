@@ -12,14 +12,14 @@ function Invite({user}) {
         socket.on('recieve-invite', (data)=>{
             getPlayerName(data.player).then((name) =>{
                 console.log(name)
-                setPlayer(name)
+                setPlayer({id:data.player, name:name})
                 setActive(true)
             })
         }) 
     }, [socket])
     
     function acceptInvite(){
-        socket.emit('accept-invite', player);
+        socket.emit('accept-invite', player.id);
         setActive(false);
     }
     async function getPlayerName(player){
@@ -33,7 +33,7 @@ function Invite({user}) {
         
         active ?
         <Inv> 
-            <Message> You have been invited to play by {player} </Message>
+            <Message> You have been invited to play by {player.name} </Message>
             <ButtonContainer>
                 <Button onClick={() => acceptInvite()} >Accept</Button>
                 <Button onClick={() => setActive(false)}>Decline</Button>
