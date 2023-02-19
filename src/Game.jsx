@@ -114,8 +114,8 @@ function Game({id}){
         if(count == 1) {
             const piece = getPiece(squares,startPos);
             console.log(piece)
-            // if(colour != turn) return // Your turn rule
-            // if(piece.colour != colour) return resetClick(); //your piece rule
+            if(colour != turn) return // Your turn rule
+            if(piece.colour != colour) return resetClick(); //your piece rule
             const moves = getMoves(startPos,squares);
             const filterdMoves = filterMoves(moves);
             previewMoves(filterdMoves);
@@ -675,7 +675,6 @@ function Game({id}){
         {winner}
         {winner && <WinScreen id={currentUser.uid} location={location} winner={winner} eloChange={eloChange} colour={colour}/> }
         <h2>it is {turn}'s turn</h2> 
-        <WinScreen id={currentUser.uid} location={location} winner={"black"} eloChange={43} colour={"black"}/>
         <Container >
        
             <Spacer/>
