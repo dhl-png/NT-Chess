@@ -5,6 +5,7 @@ import { Outlet, Route } from "react-router-dom"
 import Navbar from "./Navbar.jsx"
 import Invite from "./Invite"
 import { UserProvider } from "./providers/UserProvider"
+import styled from "styled-components"
 
 function OnlineWrapper(){
     const {currentUser} = useAuth()
@@ -16,10 +17,17 @@ function OnlineWrapper(){
                     <Navbar />
                     <Outlet />
                     <Invite />
+                  
                 </UserProvider>
             </GameWrapper>
         </SocketProvider>
     )
 }
+
+const Container = styled.div`
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+`
 
 export default OnlineWrapper

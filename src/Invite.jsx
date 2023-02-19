@@ -22,29 +22,42 @@ function Invite({user}) {
     }
 
     return (
+        
         active ?
         <Inv> 
+      
+         
             <Message> You have been invited to play by {player} </Message>
             <ButtonContainer>
                 <Button onClick={() => acceptInvite()} >Accept</Button>
                 <Button onClick={() => setActive(false)}>Decline</Button>
             </ButtonContainer> 
-        </Inv> : 
-        
+      
+            </Inv>
+     : 
         <Inv>
         </Inv>
     ) 
 }
 
-
+const Container = styled.div`
+    position: absolute;
+`
     
 const Inv = styled.div`
-display: flex;
-flex-direction: column;
-align-content: flex-end;
-align-self: flex-end;
-border: 0.2em solid black;
-margin: 5vw;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-self: flex-end;
+    border: 0.2em solid black;
+    margin-right: 2em;
+    margin-bottom:2em;
+    @media(orientation: portrait){
+        align-self: center;
+        margin-right: 0;
+        margin-bottom:2em;
+    }
+
 `
 const Button = styled.button`
 justify-self:flex-end;

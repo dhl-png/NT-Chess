@@ -8,10 +8,15 @@ import { useLocation } from "react-router";
 function WinScreen({winner,id,eloChange}){
     const socket = useSocket();
     const {fetchUser} = useUser();
+    const [active, setActive]= useState(true);
     const navigate = useNavigate();
 
     function rematch(){
        socket.emit('rematch', "test");
+    }
+    
+    function hide(){
+        setActive(false)
     }
 
     async function newGame(){
@@ -28,39 +33,53 @@ function WinScreen({winner,id,eloChange}){
     }
 
     return(
-        winner != null &&
+        active && winner != null &&
         <Card>
+           <ExitButton onClick={hide}>X</ExitButton>
             <h1>{winner} won</h1>
             <h1>{addPlusSymbol(eloChange)}</h1>
+
             <ButtonContainer>
                 <Button onClick ={newGame}>Play again</Button>
                 <Button onClick={rematch}>Remtach</Button>
             </ButtonContainer>
+        
         </Card>
     )
 }
 
 
 const ButtonContainer = styled.div`
-margin-top: 80%;
-
 `
-const ExitButton = styled.button`
+const ExitButton = styled.div`
     border:none;
-    align-self:right;
-    justify-self:right;
-    align-content:right;
+    display:flex;
+    flex-direction:column;
+    align-self:flex-end;
+    align-items:center;
+    justify-contet:center;
+    font-weight: 800;
+    font-size: clamp(1.5em,10vw,3em);  
+    aspect-ratio:1;
+    color:white;
+    text-align: center;
+    padding: 0.5em;
+    background:black;
+    cursor:pointer;
 `
+
+
 const Card = styled.div`
     display: flex;
+    align-items:center;
+    justify-content:space-between;
     flex-direction: column;
     border: solid black 0.5em;
     position:absolute;
-    justify-content:center;
-    align-items:center;
     align-content: flex-end;
-    height: clamp(60vh, 40vw, 60vw);
-    width: clamp(35vh, 35vw, 40vw);
+    width:75vw;
+    height: clamp(30em,20em,20vw);
+    max-width: 100em;
     top: 50%;
     right: 50%;
     transform: translate(50%, -55%);
@@ -68,6 +87,7 @@ const Card = styled.div`
     background:white;
     color:black;
     box-shadow: 8px 6px 0px 0px #000000;
+    font-size:0.8em;
 `
 
 
@@ -79,7 +99,7 @@ cursor: pointer;
 font-weight: 600;
 border: solid black 0.5em;
 background:white;
-padding: 1.5vw;
+padding: 1vw;
 &:nth-child(even){
     background:black;
     color:white;

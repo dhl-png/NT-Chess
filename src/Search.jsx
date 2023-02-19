@@ -35,17 +35,16 @@ function Search(){
         height: 3vh;
         border: solid black 0.7em;
         box-shadow: 8px 6px 0px 0px #000000;
-        margin: 0em 0em;
+        margin: 1em 0em;
     `
 
 
     const Table = styled.table`
-        margin-top: 10em;
-        width: 60vw;
+        margin-top: 5em;
+        width: 80vw;
         border-collapse: collapse;
         border: solid black 0.7em;
         box-shadow: 8px 6px 0px 0px #000000;
-        
     `
     
     const Tr = styled.tr`
@@ -53,6 +52,9 @@ function Search(){
         &:hover{
             background: black;
             color:white;
+        }
+        &:nth-child(2n){
+            background:rgb(0,0,0,0.2);
         }
     `
     const Th = styled.th`
@@ -113,7 +115,8 @@ function Search(){
 const Container = styled.div`
     display:flex;
     flex-direction: column;
-    
+    align-items:center;
 `
+
 
 export default Search

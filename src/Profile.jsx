@@ -91,7 +91,7 @@ function Profile(){
         if(user == null) return <h1>Loading...</h1>
         return(
             
-        <>  
+        <Container>  
         <Card>
         <Title>{user.Username}</Title>
         <Title>({user.Elo})</Title>
@@ -101,9 +101,8 @@ function Profile(){
             </SideButtonGroup>
             
         </Card>
-
         <div>{friendStatus}</div>
-        </>
+        </Container>
         )
     }
     
@@ -117,22 +116,28 @@ function Profile(){
 
 
 const Title = styled.div`
-background:white;
-color: black;
-padding: 0.2em;
-font-size:5em;
-
+    background:white;
+    color: black;
+    padding: 0.2em;
+    font-size: clamp(2.5em, 10em, 5vw);
+`
+const Container = styled.div`
+    flex:1;
+    justify-content:space-between;
 `
 
+
 const Card = styled.div`
-position:relative;
-display:flex;
-justify-content: space-even;
-border: 0.25em solid black;
-width:75vw;
-color:black;
-padding: 2em; 
-box-shadow: 8px 6px 0px 0px #000000;
+    flex:0;
+    position:relative;
+    display:flex;
+    align-self:center;
+    justify-content: space-even;
+    border: 0.25em solid black;
+    width:75vw;
+    color:black;
+    padding: 2em; 
+    box-shadow: 8px 6px 0px 0px #000000;
 `
 
 const CardItem = styled.div`

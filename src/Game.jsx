@@ -25,7 +25,7 @@ function Game({id}){
     const {currentUser} = useAuth();
     const socket = useSocket();
     const navigate = useNavigate();
-    // const { id } = useParams();
+    const [game,setGame] = useState({white:null,lack:null});
 
     function sendBoard(board){
 
@@ -86,7 +86,12 @@ function Game({id}){
     async function fetchGame(){
         const path = location.pathname;
         const response = await fetch("https://nt-chess2.up.railway.app"+path)
+        const usernames = await fetch(`https://nt-chess2.up.railway.app/gameUsernames/${id}`)
+
         const data = await response.json();
+        const nameData = await usernames.json();
+
+        setGame(await nameData);
         console.log("data", await data.White)
         if(data.White == currentUser.uid) setColour("white") //White
         if(data.Black == currentUser.uid) {
@@ -151,7 +156,7 @@ function Game({id}){
             s[1][i] = {piece: "p", colour: 'white', enPessant: false}
         }
 
-    //White
+        //White
         s[7][0] = {piece: "r", colour: 'black', hasMoved: false}
         s[7][1] = {piece: "k", colour: 'black'}
         s[7][2] = {piece: "b", colour: 'black'}
@@ -666,33 +671,132 @@ function Game({id}){
     }
 
     return(
-        <>
+        <Content>        
         {winner}
         {winner && <WinScreen id={currentUser.uid} location={location} winner={winner} eloChange={eloChange} colour={colour}/> }
-        <h2>{colour}</h2>
-        <Board>   
-            {flip ? renderBoard(): renderReverseBoard()}
-        </Board>
+        <h2>it is {turn}'s turn</h2> 
+        <WinScreen id={currentUser.uid} location={location} winner={"black"} eloChange={43} colour={"black"}/>
+        <Container >
+       
+            <Spacer/>
+            <Board>   
+                {flip ? renderBoard(): renderReverseBoard()}
+            </Board>
 
-        <h3>it is {turn}'s turn</h3>
+            <Options>
+                
+                <PlayerContainer>
+                    <Player>{game.White}</Player>
+                    <Player>{game.Black}</Player>
+                </PlayerContainer>
 
-        <br/>
-          <StartButton onClick = {(()=> flipBoard())}
-                        name = "Flip"/>
-            <StartButton onClick = {(()=> navigate("/home"))}
-                        name = "Exit"/>
-             <StartButton onClick = {(()=> forceCheckMate())}
-                        name = "Check Mate"/>
+                <ButtonContainer>
+                    <Button onClick = {(()=> flipBoard())}>Flip</Button>
+                    <Button onClick = {(()=> forceCheckMate())}>Resign</Button>
+                    <Button onClick = {(()=> navigate("/home"))}>Exit</Button>
+                </ButtonContainer>
 
-        </>
+            </Options>
+
+           
+            </Container>
+        </Content>
+
     )
 }
 
-const Board = styled.div`
-display:grid;
-border: solid black 0.2em;
-position: relative;
-grid-template-columns: auto auto auto auto auto auto auto auto;
+const Status = styled.div`
+    margin:0;
 `
+
+const PlayerContainer = styled.div`
+    display:flex;
+    flex-direction:column;
+    justify-content:space-even;
+    width:100%;
+`
+
+const Player = styled.div`
+
+    padding:0.2em;
+    padding-right:3em;
+    font-size:2em;
+    &:nth-child(2n){
+        color:white;
+        background:black;
+    }
+`
+const ButtonContainer = styled.div`
+
+    display:flex;
+    width:100%;
+    margin-top:3em;
+    justify-content: space-even;
+    flex-direction:column;
+    @media(orientation: portrait){
+        flex-direction:row;
+        justify-content:space-around;
+    }
+`
+
+const Button = styled.div`
+  
+    padding: 0.5em 0.1em;
+    @media(orientation: portrait){
+        padding: 0.2em 1em;    
+        font-size:7vw;
+    }
+    
+`
+
+const Container = styled.div`
+
+    display:flex;
+    flex-direction:row;
+    @media(orientation: portrait){
+        flex-direction: column;
+    }
+ 
+`
+const Spacer = styled.div`
+    justify-self : flex-start;
+    @media(orientation: portrait){
+        display:none;
+    }
+    flex-basis: 0;
+`
+
+const Content = styled.div`
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-self:center;
+    justify-content:flex-start;
+`
+
+const Board = styled.div`
+    display:grid;
+    border: solid black 0.2em;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
+`
+
+const Options = styled.div`
+    display:flex;
+    border:solid 0.4em black;
+    align-items:flex-start;
+    flex-direction:column;
+    justify-content:space-between;
+    justify-self:flex-end;
+
+    max-width: 80vw;
+    flex-basis: 0;
+    @media(orientation: portrait){
+        max-width: 100vw;
+    }
+
+`
+
+
+
 
 export default Game

@@ -29,7 +29,6 @@ const firebaseConfig = {
     appId: "1:522459140272:web:5fb594d1b7ba75e34b2b75"
 }
 
-console.log("T", process.env.TEST)
 const app = initializeApp(firebaseConfig) 
 export const auth = getAuth(app)
 export default app

@@ -13,14 +13,17 @@ const Tile = styled.div`
     cursor: pointer;
     position:relative;
     text-align: center;
-    width:5vw;
-    height: 5vw;
+    aspect-ratio: 1;
+    max-width: 10vw;
+    width: 7vh;
     color: white;
+    @media(orientation: portrait){
+        max-width: 11vw;
+    }
 `
 const Image = styled.img`
     max-width:100%;
     max-height:100%;
-
 `
 function Square(props){
   

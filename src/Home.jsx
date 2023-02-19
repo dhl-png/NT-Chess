@@ -41,8 +41,9 @@ function Home(){
     return(
         <>
           <ButtonGroup>     
+            <TitleContainer>
             <Title>NT-Chess</Title>
-          
+            </TitleContainer>
             <Button onClick={() => joinGame()}>
                 <h3>New Game</h3>
             </Button>
@@ -60,10 +61,18 @@ function Home(){
     )
 }
 
+const TitleContainer = styled.div`
+overflow-wrap: break-word;
+width:100vw
+border:solid black 1px;
+line-height: 7em;
+`
+
 const Title = styled.h1`
-align-self: flex-start;
-font-size:8em;
-padding: 0.1em 0.2em;
+    align-self: flex-start;
+    font-size:8em;
+    padding: 0.1em 0em;
+    
 `
 const ButtonGroup = styled.div`
 display:flex;
