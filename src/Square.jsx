@@ -14,9 +14,9 @@ const Tile = styled.div`
     position:relative;
     text-align: center;
     aspect-ratio: 1;
-    max-width: 10vw;
     width: 7vh;
     color: white;
+    overflow:hidden;
     @media(orientation: portrait){
         max-width: 11vw;
     }
